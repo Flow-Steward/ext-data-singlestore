@@ -1,0 +1,6 @@
+{
+  "prebuilts": [
+    "singlestore"
+  ],
+  "display_name": "SingleStore (Google MCP Toolbox)"
+}

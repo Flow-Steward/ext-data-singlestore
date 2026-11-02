@@ -13,7 +13,7 @@ Create a project connection using these settings:
 | `database` | SingleStore database. Required. |
 | `user` | SingleStore user. Required. |
 
-Store the SingleStore user password in the connection secrets. Dataset advanced environment exposes only the named SINGLESTORE_ source variables; password overrides remain in secrets. Writer connections use the explicit settings above.
+Store the SingleStore user password in the connection secrets. The pinned source requires a nonempty password; datasets may alternatively use their password environment secret. Dataset advanced environment exposes only the named SINGLESTORE_ source variables; password overrides remain in secrets. Writer connections use the explicit settings above.
 
 ## Read datasets and write from workflows
 

@@ -113,3 +113,26 @@ def test_visible_ui_describes_only_this_database():
     setup = yaml.safe_load((ROOT / "ui/components/overview.yaml").read_text())
     assert NAME in setup["title"]
     assert NAME in setup["body"]
+
+
+def test_required_password_auth_preserves_dataset_env_alternative():
+    import jsonschema
+
+    contract = manifest()["runtime"]["extension_contract_v2"]
+    writer = contract["connection_types"][0]["secret_schema"]
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate({}, writer)
+    jsonschema.validate({"password": "fixture-password"}, writer)
+    password_env = SECRET_ENV[0]
+    for schema in [
+        contract["dataset_connectors"][0]["secret_schema"],
+        yaml.safe_load((ROOT / "schemas/secrets.schema.yaml").read_text()),
+    ]:
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate({}, schema)
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate({"password": ""}, schema)
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate({"env": {password_env: ""}}, schema)
+        jsonschema.validate({"password": "fixture-password"}, schema)
+        jsonschema.validate({"env": {password_env: "fixture-password"}}, schema)

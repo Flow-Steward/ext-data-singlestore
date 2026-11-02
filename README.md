@@ -1,43 +1,47 @@
 # SingleStore for Flow Steward
 
-Standalone repository: [Flow-Steward/ext-data-singlestore](https://github.com/Flow-Steward/ext-data-singlestore). Version **1.2.0** preserves the existing extension ID `flowsteward.data-connector-mcp-toolbox-singlestore` and publishes separate Linux AMD64 and ARM64 archives. The packaged native executable contains only this variant’s upstream source and tools.
+Connect **SingleStore** datasets and run parameterized workflow writes. This repository contains one installable SingleStore extension, version **1.3.0**, with separate Linux AMD64 and ARM64 archives. No other database can be selected or installed from this package.
 
-## Dataset reads
+## Set up a SingleStore connection
 
-The existing dataset connector supports connection testing, typed schema introspection, saved SQL, visual query scope validation, preview and execution. Runtime values stay separate from SQL text and use native driver parameters. Dataset queries are read-only, capped at 100 rows and 480 KiB inline output. This extension exposes no trigger surface.
+Create a project connection using these settings:
 
-## Workflow writes
+| Setting | Meaning |
+| --- | --- |
+| `host` | SingleStore host. Required. |
+| `port` | SingleStore port. Required. |
+| `database` | SingleStore database. Required. |
+| `user` | SingleStore user. Required. |
 
-`execute_write` accepts one INSERT, UPDATE or DELETE, using named placeholders such as `UPDATE products SET name = :name WHERE sku = :sku`. Provide `connection_ref`, `sql`, a `params` object and an optional JSON `param_schema`. Database-specific syntax must be supported by the selected server.
+Store the SingleStore user password in the connection secrets. Dataset advanced environment exposes only the named SINGLESTORE_ source variables; password overrides remain in secrets. Writer connections use the explicit settings above.
 
-The host supplies the matching project connection of type `toolbox_sql_writer`, resolved config/secrets, account/project scope, the exact host-v2 step execution context and a durable `external_effect_id`. Inline connection configuration and secrets are rejected. Test mode suppresses the write before starting a database driver. SQL writes run once on a dedicated driver connection; Spanner uses statement-based Update and explicit Commit without a transaction retry loop. A dispatched failure has an unknown outcome, returns `retryable: false`, and must be inspected before a manual retry.
+## Read datasets and write from workflows
 
-Successful writes return `status: executed`, `rows`, and `returned_row_count`. Drivers may return an `affected_rows` metadata row. Workflow writes do not turn the dataset read surface into a writable SQL surface.
+Datasets support connection testing, typed schema introspection, saved SQL, visual-query resource scope validation, bounded previews and execution. Read queries use the native read-only path and are capped at 100 rows and 480 KiB inline output. No trigger surface is exposed.
 
-## Connection and authentication
+`execute_write` runs one INSERT, UPDATE or DELETE on the selected SingleStore project connection. Provide `connection_ref`, SQL with named `:parameters`, a `params` object and optional JSON `param_schema`. Values stay separate from SQL and use native driver binding. The server must support the supplied SQL syntax.
 
-Configure host, port, database and user, with password in project connection secrets. The native SingleStore source uses the MySQL protocol driver and driver-bound parameters.
+The host resolves matching project configuration and secrets, account/project scope, execution context and a durable external-effect claim. Test mode suppresses writes before a driver starts. Writes execute once; uncertain dispatched failures return `retryable: false` and require checking the database before a manual retry. Workflow writes do not make dataset queries writable.
 
-## Rebuild and package
+The bounded SQL subset refuses raw dollar characters and backslashes in read SQL; write SQL also refuses raw dollar characters. Put those values in bound parameters. A top-level read LIMIT accepts one integer literal with an optional integer OFFSET. SQL and runtime safety guards are unchanged in 1.3.0.
 
-Google MCP Toolbox is pinned to tag `v1.3.0`, commit `b0010060a939455d91e4f8ba62dc3e72b1892469`; the Go container is pinned by digest in `scripts/build_toolbox.sh`.
+## Upgrade compatibility
+
+The visible name is SingleStore. The legacy extension ID `flowsteward.data-connector-mcp-toolbox-singlestore`, project connection type `toolbox_sql_writer`, dataset connector IDs and action IDs remain unchanged so existing installations and workflows can upgrade. These are internal compatibility identifiers, not a second database selector.
+
+## Technical implementation and packaging
+
+Google MCP Toolbox is implementation tooling, pinned to tag `v1.3.0`, commit `b0010060a939455d91e4f8ba62dc3e72b1892469`. Its fixed native build registers only this repository's SingleStore interfaces. Installation and runtime download no drivers. Existing native binaries and provenance are unchanged by the 1.3.0 UI/schema correction.
+
+To package the existing verified binaries:
 
 ```sh
-./scripts/build_toolbox.sh
 python3 scripts/package_extension.py --runtime-target linux-amd64
 python3 scripts/package_extension.py --runtime-target linux-arm64
 ```
 
-The resource-capped Docker builder applies the checked-in native patch, runs binding/source regression tests, and builds both architectures. `toolbox-provenance.json` records source, image, patch digest and native binary SHA-256 values. `SHA256SUMS` records native checksums; `dist/SHA256SUMS` records the two installer archives. The package has exactly its target executable and `.fs-package.yaml` metadata. Builds require upstream source downloads; installation and runtime do not download a driver.
+`scripts/build_toolbox.sh` is the optional pinned implementation rebuild; it cannot select another database. `toolbox-provenance.json`, `THIRD_PARTY.yml` and root `SHA256SUMS` describe the native payloads. Each installer ZIP contains exactly one executable for its target and target/native metadata. The byte-exact Apache-2.0 license is in `LICENSE`; implementation notices are in `NOTICE`.
 
-The byte-exact upstream Apache license is preserved in `LICENSE` (SHA-256 `58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd`); see `NOTICE` and `THIRD_PARTY.yml`.
+## Verification limits
 
-## Validation scope
-
-Python extension gates validate host contracts, parameter separation, scope/ref checks, test suppression, output bounds and unknown write outcomes. Native recording-driver tests assert one DML dispatch, including `driver.ErrBadConn`, with SQL and values separate. SQLite additionally exercises real temporary-file INSERT/UPDATE/DELETE with the packaged source driver. Authenticated external services were unavailable: no live SingleStore service success is claimed by compile and contract evidence alone.
-
-Read SQL containing a raw backslash or a dollar-quote delimiter (`$$` / `$tag$`), including inside identifiers, is refused before comment/quote parsing; put data values in bound parameters. Top-level LIMIT accepts one integer literal and an optional integer OFFSET; arithmetic limits and comma-offset forms are refused. SQL Server set queries are refused by the bounded TOP form.
-
-Write SQL also refuses raw dollar-quote delimiters before the single-DML scanner, including delimiters inside identifiers. Dollar text and backslashes remain supported in bound data values.
-
-The SQL subset rejects **every raw `$` character** before any read/write lexer, including Unicode dollar tags, quoted text and identifiers. Use named `:parameters` for dollar-containing data. Driver placeholders such as PostgreSQL `$1` are generated only after validation; bound values are unchanged.
+Manifest isolation checks cover friendly names, database-specific fields, credential separation and the exact shipped SQL profiles. Contract tests cover scope/ref checks, parameter separation, test-mode suppression, output bounds and unknown write outcomes. No live SingleStore credentials were supplied; compile and contract evidence does not establish a successful authenticated database connection.

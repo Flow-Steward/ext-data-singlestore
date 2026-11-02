@@ -136,3 +136,49 @@ def test_required_password_auth_preserves_dataset_env_alternative():
             jsonschema.validate({"env": {password_env: ""}}, schema)
         jsonschema.validate({"password": "fixture-password"}, schema)
         jsonschema.validate({"env": {password_env: "fixture-password"}}, schema)
+
+
+@pytest.mark.parametrize("shape", ["resolved", "legacy", "combined"])
+def test_secret_environment_is_forwarded_without_a_provider(shape, monkeypatch):
+    from copy import deepcopy
+    from test_toolbox_dataset_connector import _runtime_module
+
+    module = _runtime_module()
+
+    def no_provider(*args, **kwargs):
+        raise AssertionError("environment resolution must not start a provider")
+
+    monkeypatch.setattr(module.subprocess, "Popen", no_provider)
+    key = SECRET_ENV[0]
+    secret_refs = (
+        {"values": {"env": {key: "nested-fixture"}}}
+        if shape == "resolved"
+        else {"env": {key: "legacy-fixture"}}
+        if shape == "legacy"
+        else {"values": {"env": {key: "nested-fixture"}}, "env": {key: "legacy-fixture"}}
+    )
+    before = deepcopy(secret_refs)
+    config = {"prebuilt": EXPECTED_PREBUILTS[0]}
+    env = module._toolbox_env(config, secret_refs)
+    assert env[key] == ("nested-fixture" if shape == "resolved" else "legacy-fixture")
+    assert secret_refs == before
+
+
+def test_environment_override_order_stays_explicit(monkeypatch):
+    from test_toolbox_dataset_connector import _runtime_module
+
+    module = _runtime_module()
+    config_key = EXPECTED_FIELDS[0]
+    public_key = PUBLIC_ENV[0]
+    secret_key = SECRET_ENV[0]
+    monkeypatch.setenv(public_key, "inherited-fixture")
+    config = {
+        "prebuilt": EXPECTED_PREBUILTS[0],
+        config_key: "typed-fixture",
+        "env": {public_key: "public-fixture"},
+    }
+    env = module._toolbox_env(
+        config, {"values": {"password": "field-fixture", "env": {secret_key: "resolved-fixture"}}}
+    )
+    assert env[public_key] == "public-fixture"
+    assert env[secret_key] == "resolved-fixture"

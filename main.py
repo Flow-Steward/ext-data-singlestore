@@ -366,8 +366,11 @@ def _toolbox_env(config: dict[str, Any], secret_refs: dict[str, Any]) -> dict[st
     prebuilt = _runtime_prebuilt(config)
     env = dict(os.environ)
     explicit_env = _as_dict(config.get("env"))
-    secret_env = _as_dict(secret_refs.get("env"))
     secrets = _secret_ref_values(secret_refs)
+    secret_env = {
+        **_as_dict(secrets.get("env")),
+        **_as_dict(secret_refs.get("env")),
+    }
     for env_name, config_key in TOOLBOX_ENV_FIELDS.get(prebuilt, {}).items():
         value = explicit_env.get(env_name)
         if value is None:

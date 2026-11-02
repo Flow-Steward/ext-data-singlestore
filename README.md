@@ -13,7 +13,7 @@ Create a project connection using these settings:
 | `database` | SingleStore database. Required. |
 | `user` | SingleStore user. Required. |
 
-Store the SingleStore user password in the connection secrets. The pinned source requires a nonempty password; datasets may alternatively use their password environment secret. Dataset advanced environment exposes only the named SINGLESTORE_ source variables; password overrides remain in secrets. Writer connections use the explicit settings above.
+Store the SingleStore user password in the connection secrets. The pinned source requires a nonempty password; datasets may alternatively use their password environment secret. Resolved dataset secret environment values are forwarded to the native process; direct environment overrides retain their established precedence. Dataset advanced environment exposes only the named SINGLESTORE_ source variables; password overrides remain in secrets. Writer connections use the explicit settings above.
 
 ## Read datasets and write from workflows
 
@@ -23,7 +23,7 @@ Datasets support connection testing, typed schema introspection, saved SQL, visu
 
 The host resolves matching project configuration and secrets, account/project scope, execution context and a durable external-effect claim. Test mode suppresses writes before a driver starts. Writes execute once; uncertain dispatched failures return `retryable: false` and require checking the database before a manual retry. Workflow writes do not make dataset queries writable.
 
-The bounded SQL subset refuses raw dollar characters and backslashes in read SQL; write SQL also refuses raw dollar characters. Put those values in bound parameters. A top-level read LIMIT accepts one integer literal with an optional integer OFFSET. SQL and runtime safety guards are unchanged in 1.3.0.
+The bounded SQL subset refuses raw dollar characters and backslashes in read SQL; write SQL also refuses raw dollar characters. Put those values in bound parameters. A top-level read LIMIT accepts one integer literal with an optional integer OFFSET. The existing SQL safety guards are unchanged; 1.3.0 adds database-specific settings validation and preserves native payloads.
 
 ## Upgrade compatibility
 

@@ -1,13 +1,14 @@
 # Brand artwork
 
-`icon.png` identifies SingleStore.
+`icon.png` identifies SingleStore using original official brand artwork.
 
-Source: https://www.singlestore.com/favicon.ico
+Reference: https://www.singlestore.com/brand/
 
-Reference: https://www.singlestore.com/
+Source: https://www.singlestore.com/icons/icon-512x512.png?v=277b9cbbe31e8bc416504cf3b902d430
 
-Official brand asset; trademark rights retained by brand owner. No separate permissive artwork license verified; software license is not asserted to license the logo.
+Source SHA-256: `0290f697d15d7944ea71d7832bb9a7fe0d54845a7d5dc1f04e4357308f89dc59`.
+Packaged PNG SHA-256: `63756bc7868e4ab0ea37942eabfe59bd7524556331dbc9fb459f2f71747bea8c`.
 
-Preparation: Standard ImageMagick raster conversion/resizing, centered on 256x256 canvas; no generative edits.
+Preparation: ImageMagick: magick SOURCE -resize 224x224 -background none -gravity center -extent 256x256 replacement.png. Aspect ratio preserved; original source clearspace retained; no redraw, crop, recolor, or generative edits.
 
-Source SHA-256: `b4c1d2fd82ae8a164ed5c505a2600cd4ded13159a98670a295da5c65812329c4`. Packaged PNG SHA-256: `ab152769a3065d105d53926f059d1b4cac3bcbd106b3c13c7949c8db7e66533f`.
+Official brand asset; trademark rights retained by brand owner. No separate permissive artwork license verified; software license does not purport to license the logo. No endorsement implied.

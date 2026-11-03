@@ -1,6 +1,6 @@
 # SingleStore for Flow Steward
 
-Connect **SingleStore** datasets and run parameterized workflow writes. This repository contains one installable SingleStore extension, version **1.3.1**, with separate Linux AMD64 and ARM64 archives. No other database can be selected or installed from this package.
+Connect **SingleStore** datasets and run parameterized workflow writes. This repository contains one installable SingleStore extension, version **1.3.2**, with separate Linux AMD64 and ARM64 archives. No other database can be selected or installed from this package.
 
 ## Set up a SingleStore connection
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- Use the original official provider artwork in the catalog and extension icon. Runtime behavior is unchanged.
+
 ## 1.3.1
 
 - Use official database brand artwork with recorded source attribution.

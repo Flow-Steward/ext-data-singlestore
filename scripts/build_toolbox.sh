@@ -6,25 +6,43 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 VARIANT=singlestore
 TOOLBOX_TAG=v1.3.0
 TOOLBOX_COMMIT=b0010060a939455d91e4f8ba62dc3e72b1892469
-GO_IMAGE=golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19
+GO_IMAGE=golang:1.26.10-bookworm@sha256:5de7c99eb78ca5e515a4c340235d0955ec5964a5071c492c15503d7c267da473
 PATCH=scripts/patches/0001-flowsteward-driver-bound-query-params.patch
+SECURITY_PATCH=scripts/patches/0003-flowsteward-security-dependencies.patch
 # This repository pins only SingleStore SQL interfaces.
 test -f "$ROOT/scripts/toolbox-prebuilts.txt" \
   || { echo "[FAIL] missing fixed database prebuilt list" >&2; exit 2; }
 PREBUILTS=$(cat "$ROOT/scripts/toolbox-prebuilts.txt")
 mkdir -p "$ROOT"
 
+# Optional clean checkout must match the exact pinned source revision.
+set --
+if test -n "${FS_TOOLBOX_SOURCE_DIR:-}"; then
+  set -- --mount "type=bind,source=$FS_TOOLBOX_SOURCE_DIR,target=/upstream,readonly"
+fi
+
 docker run --rm --cpus=1 --memory=2g \
   -v flow-steward-db-batch-go-cache:/go/pkg/mod -v flow-steward-db-batch-build-cache:/root/.cache/go-build \
   -e TOOLBOX_TAG="$TOOLBOX_TAG" -e TOOLBOX_COMMIT="$TOOLBOX_COMMIT" -e PATCH="$PATCH" \
+  -e SECURITY_PATCH="$SECURITY_PATCH" -e GOTOOLCHAIN=local -e GOFLAGS=-mod=readonly \
   -e PREBUILTS="$PREBUILTS" -e VARIANT="$VARIANT" \
   -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
-  -v "$ROOT:/out" "$GO_IMAGE" sh -c '
+  -v "$ROOT:/out" "$@" "$GO_IMAGE" sh -c '
     set -eu
-    git clone --quiet --filter=blob:none --branch "$TOOLBOX_TAG" --depth 1 \
-      https://github.com/googleapis/mcp-toolbox.git /src
+    if test -d /upstream/.git; then
+      test -z "$(git -c safe.directory=/upstream -C /upstream status --porcelain)"
+      cp -a /upstream /src
+    else
+      git clone --quiet --filter=blob:none --branch "$TOOLBOX_TAG" --depth 1 \
+        https://github.com/googleapis/mcp-toolbox.git /src
+    fi
+    git config --global --add safe.directory /src
     test "$(git -C /src rev-parse HEAD)" = "$TOOLBOX_COMMIT"
     cd /src
+    git apply --check "/out/$SECURITY_PATCH"
+    git apply "/out/$SECURITY_PATCH"
+    sha256sum go.mod go.sum > /tmp/locked-modules.sha256
+    git apply --check "/out/$PATCH"
     git apply "/out/$PATCH"
 
     # Every resource type the prebuilt configurations name ...
@@ -55,20 +73,21 @@ docker run --rm --cpus=1 --memory=2g \
     cp /tmp/packages "/out/packages.txt"
 
     gofmt -w internal/util/flowstewardbinding internal/sources/sqlite internal/sources/singlestore internal/sources/oceanbase internal/sources/clickhouse internal/sources/snowflake internal/sources/spanner
-    go test -p 1 ./internal/util/flowstewardbinding
+    go test -mod=readonly -p 1 ./internal/util/flowstewardbinding
     for package in $(cat /tmp/packages | grep /internal/sources/); do
-      go test -p 1 -run TestFlowStewardBoundWrite "./${package#github.com/googleapis/mcp-toolbox/}"
+      go test -mod=readonly -p 1 -run TestFlowStewardBoundWrite "./${package#github.com/googleapis/mcp-toolbox/}"
     done
     export SOURCE_DATE_EPOCH=1779400183
     for target in linux-amd64 linux-arm64; do
       arch=${target#linux-}
       mkdir -p "/out/bin/$target"
-      CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -p 1 -trimpath -buildvcs=false \
+      CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -mod=readonly -p 1 -trimpath -buildvcs=false \
         -ldflags "-s -w -buildid= -X github.com/googleapis/mcp-toolbox/cmd.buildType=flowsteward.dataset-connectors -X github.com/googleapis/mcp-toolbox/cmd.commitSha=$TOOLBOX_COMMIT" \
         -o "/out/bin/$target/toolbox" .
       chmod 0755 "/out/bin/$target/toolbox"
       echo "[PASS] $VARIANT $target: $(stat -c %s "/out/bin/$target/toolbox") bytes"
     done
+    sha256sum -c /tmp/locked-modules.sha256
     chown -R "$HOST_UID:$HOST_GID" "/out/bin" "/out/packages.txt"
   '
 

@@ -11,8 +11,8 @@ release:
   official_linux_arm64_available: false
 build:
   script: scripts/build_toolbox.sh (github.com/Flow-Steward/ext-data-singlestore)
-  container_image: golang:1.26.2-bookworm@sha256:47ce5636e9936b2c5cbf708925578ef386b4f8872aec74a67bd13a627d242b19
-  go_version: 1.26.2
+  container_image: golang:1.26.10-bookworm@sha256:5de7c99eb78ca5e515a4c340235d0955ec5964a5071c492c15503d7c267da473
+  go_version: 1.26.10
   targets:
   - linux-amd64
   - linux-arm64
@@ -27,4 +27,6 @@ build:
   local_patch: scripts/patches/0001-flowsteward-driver-bound-query-params.patch
   local_patch_purpose: Native driver-bound query parameters; explicit one-shot ExecContext
     DML; Spanner statement-based Update and Commit without a transaction retry loop.
+  security_patch: scripts/patches/0003-flowsteward-security-dependencies.patch
+  security_baseline: scripts/native-security-baseline.json
   network_at_install_or_runtime: false

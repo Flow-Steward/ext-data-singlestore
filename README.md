@@ -31,7 +31,7 @@ The visible name is SingleStore. The legacy extension ID `flowsteward.data-conne
 
 ## Technical implementation and packaging
 
-Google MCP Toolbox is implementation tooling, pinned to tag `v1.3.0`, commit `b0010060a939455d91e4f8ba62dc3e72b1892469`. Its fixed native build registers only this repository's SingleStore interfaces. Installation and runtime download no drivers. Existing native binaries and provenance are unchanged by the 1.3.0 UI/schema correction.
+Google MCP Toolbox is implementation tooling, pinned to tag `v1.16.0`, commit `06ea49d9a487a72c22419b5a8d5c22c11f0d7485`. Its fixed native build registers only this repository's SingleStore interfaces. Installation and runtime download no drivers. Native binaries are rebuilt with Go 1.27.3 and the reviewed module baseline; toolbox-provenance.json records exact patches, dependencies and binary digests.
 
 To package the existing verified binaries:
 

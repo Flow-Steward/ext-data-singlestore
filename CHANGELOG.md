@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.4
+
+- Upgrade pinned Toolbox to v1.16.0, Go 1.27.3 and the reviewed dependency baseline. Port bound SQL and native safety checks to current driver interfaces while retaining approved connection profiles.
+
 ## 1.3.3
 
 - Rebuild pinned Toolbox v1.3.0 with Go 1.26.10 and security dependency floors, preserving database safety patches and host behavior.

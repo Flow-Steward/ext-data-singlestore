@@ -6,7 +6,7 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 VARIANT=singlestore
 TOOLBOX_TAG=v1.16.0
 TOOLBOX_COMMIT=06ea49d9a487a72c22419b5a8d5c22c11f0d7485
-GO_IMAGE=golang:1.27.3-bookworm@sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0
+BOOTSTRAP_IMAGE=golang:1.27.3-bookworm@sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0
 PATCH=scripts/patches/0001-flowsteward-driver-bound-query-params.patch
 SECURITY_PATCH=scripts/patches/0003-flowsteward-security-dependencies.patch
 PROFILE_PATCH=scripts/patches/0004-flowsteward-approved-profiles.patch
@@ -28,8 +28,9 @@ docker run --rm --cpus=2 --memory=4g \
   -e PROFILE_PATCH="$PROFILE_PATCH" -e SECURITY_PATCH="$SECURITY_PATCH" -e GOTOOLCHAIN=local -e GOFLAGS=-mod=readonly \
   -e PREBUILTS="$PREBUILTS" -e VARIANT="$VARIANT" \
   -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
-  -v "$ROOT:/out" "$@" "$GO_IMAGE" sh -c '
+  -v "$ROOT:/out" "$@" "$BOOTSTRAP_IMAGE" sh -c '
     set -eu
+    sh /out/scripts/install-go-toolchain.sh /out/scripts/go-toolchain-selected.json
     if test -d /upstream/.git; then
       test -z "$(git -c safe.directory=/upstream -C /upstream status --porcelain)"
       cp -a /upstream /src

@@ -328,7 +328,7 @@
         "cloud.google.com/go/cloudsqlconn": "v1.26.0",
         "cloud.google.com/go/compute/metadata": "v0.10.0",
         "cloud.google.com/go/monitoring": "v1.32.1",
-        "cloud.google.com/go/sql": "v0.3.0",
+        "cloud.google.com/go/sql": "v0.6.0",
         "cloud.google.com/go/trace": "v1.18.1",
         "filippo.io/edwards25519": "v1.2.0",
         "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric": "v0.62.0",
@@ -387,7 +387,7 @@
         "go.opentelemetry.io/proto/otlp": "v1.11.1",
         "go.uber.org/multierr": "v1.11.0",
         "golang.org/x/crypto": "v0.58.1-0.20261009181718-2f1f834330b2",
-        "golang.org/x/mod": "v0.42.0",
+        "golang.org/x/mod": "v0.43.0",
         "golang.org/x/net": "v0.62.0",
         "golang.org/x/oauth2": "v0.38.0",
         "golang.org/x/sync": "v0.25.0",
@@ -403,7 +403,7 @@
         "google.golang.org/protobuf": "v1.36.12"
       },
       "path": "bin/linux-amd64/toolbox",
-      "sha256": "1e7de62bb3b2737098bdcc6a208a3515d3043ec71d2d94d444b040dbb00d8395",
+      "sha256": "c28deb6357df599469803a2f639be06f37546c1f9d4eba356772eb3134460d65",
       "size": 31617148
     },
     "linux-arm64": {
@@ -417,7 +417,7 @@
         "cloud.google.com/go/cloudsqlconn": "v1.26.0",
         "cloud.google.com/go/compute/metadata": "v0.10.0",
         "cloud.google.com/go/monitoring": "v1.32.1",
-        "cloud.google.com/go/sql": "v0.3.0",
+        "cloud.google.com/go/sql": "v0.6.0",
         "cloud.google.com/go/trace": "v1.18.1",
         "filippo.io/edwards25519": "v1.2.0",
         "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric": "v0.62.0",
@@ -476,7 +476,7 @@
         "go.opentelemetry.io/proto/otlp": "v1.11.1",
         "go.uber.org/multierr": "v1.11.0",
         "golang.org/x/crypto": "v0.58.1-0.20261009181718-2f1f834330b2",
-        "golang.org/x/mod": "v0.42.0",
+        "golang.org/x/mod": "v0.43.0",
         "golang.org/x/net": "v0.62.0",
         "golang.org/x/oauth2": "v0.38.0",
         "golang.org/x/sync": "v0.25.0",
@@ -492,18 +492,18 @@
         "google.golang.org/protobuf": "v1.36.12"
       },
       "path": "bin/linux-arm64/toolbox",
-      "sha256": "5bc526ce4a99d62909518bf1f052139f18c19ee3389021277df0b773d992507a",
+      "sha256": "4f9d393b6d73910fc62bbeeac4aabf525fb64ef9080adaf4a6292206ac089c6b",
       "size": 29556860
     }
   },
   "build_identities": {
-    "go.mod": "1c59a76307271df0a6992d9db406f9c49ba670dfb898e029bbc86136adcc9294",
-    "go.sum": "d0e98fac8a9d4677bc239a668b472dd2f459ab65f3d0fec7ceb2a50bb6138841",
+    "go.mod": "f547c08375f72e483c269c214f1a5190a8d81237687455549f829aac5a8d7d51",
+    "go.sum": "5c713561f5dce0e9c5c38977c925f54c94a4bec1095642cb6d04baaa612beacd",
     "go_image": "golang:1.27.3-bookworm@sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0",
     "go_version": "go1.27.3",
-    "module_patch_sha256": "af406af0a861bea0b8e3d83e55fbdef9173cc01762788c6d06cc9b47eaa558e1",
+    "module_patch_sha256": "958ad7a46b015c6520d1c60037c4e6fab41e756d417a618c612f08ac8806dfe7",
     "profile_patch_sha256": "df264c60006ad1a01812b427fb6a9593115ddd86227fc9522b8bae6731616aca",
-    "revision": 2,
+    "revision": 3,
     "toolbox_commit": "06ea49d9a487a72c22419b5a8d5c22c11f0d7485",
     "toolbox_tag": "v1.16.0"
   },
@@ -511,7 +511,7 @@
   "patch_sha256": "b3c627eb605947134461c6a47dee83341c57e94508e4f9199df613937adf9eb8",
   "patches": {
     "scripts/patches/0001-flowsteward-driver-bound-query-params.patch": "b3c627eb605947134461c6a47dee83341c57e94508e4f9199df613937adf9eb8",
-    "scripts/patches/0003-flowsteward-security-dependencies.patch": "af406af0a861bea0b8e3d83e55fbdef9173cc01762788c6d06cc9b47eaa558e1",
+    "scripts/patches/0003-flowsteward-security-dependencies.patch": "958ad7a46b015c6520d1c60037c4e6fab41e756d417a618c612f08ac8806dfe7",
     "scripts/patches/0004-flowsteward-approved-profiles.patch": "df264c60006ad1a01812b427fb6a9593115ddd86227fc9522b8bae6731616aca"
   },
   "registered_prebuilts": [
@@ -534,6 +534,7 @@
       "cloud.google.com/go/longrunning": "v1.5.0",
       "cloud.google.com/go/monitoring": "v1.32.1",
       "cloud.google.com/go/spanner": "v1.96.1",
+      "cloud.google.com/go/sql": "v0.6.0",
       "cloud.google.com/go/trace": "v1.18.1",
       "github.com/Azure/azure-sdk-for-go/sdk/azcore": "v1.24.0",
       "github.com/Azure/azure-sdk-for-go/sdk/internal": "v1.13.0",
@@ -616,6 +617,7 @@
       "go.uber.org/atomic": "v1.12.0",
       "go.yaml.in/yaml/v3": "v3.0.6",
       "golang.org/x/crypto": "v0.58.1-0.20261009181718-2f1f834330b2",
+      "golang.org/x/mod": "v0.43.0",
       "golang.org/x/net": "v0.62.0",
       "golang.org/x/oauth2": "v0.38.0",
       "golang.org/x/sys": "v0.50.0",

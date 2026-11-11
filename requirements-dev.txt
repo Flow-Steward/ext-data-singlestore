@@ -7,3 +7,4 @@ iniconfig
 packaging
 pluggy
 PyYAML
+jsonschema==4.26.0

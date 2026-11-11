@@ -1,6 +1,6 @@
 # SingleStore for Flow Steward
 
-Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.6**.
+Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.7**.
 
 Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews, query execution and output-schema inference. Table and column resource selections constrain Dataset queries, while query parameters let the same saved definition accept different workflow values. Read results are limited to 100 rows and 480 KiB of inline output.
 
@@ -53,3 +53,31 @@ python3 scripts/package_extension.py --runtime-target linux-arm64
 ## Verification limits
 
 Manifest isolation checks cover friendly names, database-specific fields, credential separation and the exact shipped SQL profiles. Contract tests cover scope/ref checks, parameter separation, test-mode suppression, output bounds and unknown write outcomes. No live SingleStore credentials were supplied; compile and contract evidence does not establish a successful authenticated database connection.
+
+## Automated releases
+
+CI runs on pull requests and pushes to `main`. Official releases run through the
+pinned shared GitHub Actions workflow using `.github/release-config.json` to test,
+package both Linux runtime targets, and publish the release assets automatically.
+Manual ZIP uploads are not part of the release process.
+
+After merging the version **1.3.7** update into `main`, create and push its tag:
+
+```sh
+git switch main
+git pull --ff-only
+git tag -a v1.3.7 -m "Release v1.3.7"
+git push origin v1.3.7
+```
+
+To rerun the workflow for an existing tag without moving it:
+
+```sh
+gh workflow run release.yml --ref main -f tag=v1.3.7
+```
+
+The manifest remains the source for release identity and catalog descriptions.
+The shared workflow installs the verified first-party SDK wheel before test
+dependencies. Where native payloads are absent from source, the recipe restores
+only the listed missing files from checksum-pinned published archives; the source
+packager still verifies their provenance before packaging.

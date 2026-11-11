@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "extension_id": "flowsteward.data-connector-mcp-toolbox-singlestore",
+  "runtime_targets": [
+    "linux-amd64",
+    "linux-arm64"
+  ],
+  "package_script": "scripts/package_extension.py",
+  "test_requirements": [
+    "requirements-dev.txt"
+  ],
+  "test_paths": [
+    "tests/test_database_identity.py",
+    "tests/test_license_integrity.py",
+    "tests/test_native_security.py",
+    "tests/test_native_source_identity.py",
+    "tests/test_protocol_budget.py",
+    "tests/test_read_sql_guards.py",
+    "tests/test_sql_writes.py",
+    "tests/test_toolbox_dataset_connector.py",
+    "tests/test_vendored_wheels.py",
+    "tests/test_write_sql_guards.py"
+  ],
+  "additional_assets": [],
+  "payload_sources": [
+    {
+      "target": "linux-amd64",
+      "url": "https://github.com/Flow-Steward/ext-data-singlestore/releases/download/v1.3.5/flowsteward.data-connector-mcp-toolbox-singlestore-1.3.5-linux-amd64.zip",
+      "bytes": 11035646,
+      "sha256": "0b99a2bc5fc954e18c8d829e952b55cbc636dd7413c5ed055930e8782d023eb2",
+      "restore_paths": [
+        "bin/linux-amd64/toolbox"
+      ]
+    },
+    {
+      "target": "linux-arm64",
+      "url": "https://github.com/Flow-Steward/ext-data-singlestore/releases/download/v1.3.5/flowsteward.data-connector-mcp-toolbox-singlestore-1.3.5-linux-arm64.zip",
+      "bytes": 9975389,
+      "sha256": "7fadb5a332f07ec999e1e1569bfee59cd09ea21574e2ffb80baec85614bae7fc",
+      "restore_paths": [
+        "bin/linux-arm64/toolbox"
+      ]
+    }
+  ]
+}

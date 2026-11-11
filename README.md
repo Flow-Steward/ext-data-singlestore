@@ -1,6 +1,14 @@
 # SingleStore for Flow Steward
 
-Connect **SingleStore** datasets and run parameterized workflow writes. This repository contains one installable SingleStore extension, version **1.3.5**, with separate Linux AMD64 and ARM64 archives. No other database can be selected or installed from this package.
+Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.6**.
+
+Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews, query execution and output-schema inference. Table and column resource selections constrain Dataset queries, while query parameters let the same saved definition accept different workflow values. Read results are limited to 100 rows and 480 KiB of inline output.
+
+A separate execute_write action runs one INSERT, UPDATE or DELETE against a selected project connection. SQL uses named parameters and a values object, with an optional parameter schema, so reusable statements can accept record identifiers, statuses and other workflow values. For example, read records that need attention, send them through a review workflow, then update their status or insert a processing result using the record identifier as a parameter.
+
+Set up the connection with an explicit SingleStore host, port, database and user, and keep the password in connection secrets. Reads remain read-only even when workflow write steps are available. This extension exposes selected SQL data access rather than database triggers, schema administration or multi-statement scripts. Use returned records in subsequent steps for branching, notifications or follow-up processing, and use separate write steps to persist the outcome.
+
+Create a project SingleStore connection with host, port, database and user, plus a nonempty secret password. Give the database user the read privileges needed for Dataset queries and the INSERT/UPDATE/DELETE grants required by your workflow steps.
 
 ## Set up a SingleStore connection
 

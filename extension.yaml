@@ -4,15 +4,28 @@ lifecycle:
   data_migrations: []
 extension_id: flowsteward.data-connector-mcp-toolbox-singlestore
 kind: tool_provider
-version: "1.3.7"
+version: "1.3.8"
 release_stage: active
 display_name: SingleStore
-description: |-
-  Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews, query execution and output-schema inference. Table and column resource selections constrain Dataset queries, while query parameters let the same saved definition accept different workflow values. Read results are limited to 100 rows and 480 KiB of inline output.
+description: 'Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates.
+  The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews,
+  query execution and output-schema inference. Table and column resource selections constrain Dataset
+  queries, while query parameters let the same saved definition accept different workflow values. Read
+  results are limited to 100 rows and 480 KiB of inline output.
 
-  A separate execute_write action runs one INSERT, UPDATE or DELETE against a selected project connection. SQL uses named parameters and a values object, with an optional parameter schema, so reusable statements can accept record identifiers, statuses and other workflow values. For example, read records that need attention, send them through a review workflow, then update their status or insert a processing result using the record identifier as a parameter.
 
-  Set up the connection with an explicit SingleStore host, port, database and user, and keep the password in connection secrets. Reads remain read-only even when workflow write steps are available. This extension exposes selected SQL data access rather than database triggers, schema administration or multi-statement scripts. Use returned records in subsequent steps for branching, notifications or follow-up processing, and use separate write steps to persist the outcome.
+  A separate execute_write action runs one INSERT, UPDATE or DELETE against a selected project connection.
+  SQL uses named parameters and a values object, with an optional parameter schema, so reusable statements
+  can accept record identifiers, statuses and other workflow values. For example, read records that need
+  attention, send them through a review workflow, then update their status or insert a processing result
+  using the record identifier as a parameter.
+
+
+  Set up the connection with an explicit SingleStore host, port, database and user, and keep the password
+  in connection secrets. Reads remain read-only even when workflow write steps are available. This extension
+  exposes selected SQL data access rather than database triggers, schema administration or multi-statement
+  scripts. Use returned records in subsequent steps for branching, notifications or follow-up processing,
+  and use separate write steps to persist the outcome.'
 vendor:
   name: Flow Steward
   support_url: https://github.com/Flow-Steward/ext-data-singlestore/issues
@@ -23,14 +36,30 @@ listing:
   - database
   - dataset
   - singlestore
-  summary: "Inspect SingleStore schemas, read saved datasets and automate parameterized INSERT, UPDATE and DELETE workflow steps."
-  description: |-
-    Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews, query execution and output-schema inference. Table and column resource selections constrain Dataset queries, while query parameters let the same saved definition accept different workflow values. Read results are limited to 100 rows and 480 KiB of inline output.
+  summary: Inspect SingleStore schemas, read saved datasets and automate parameterized INSERT, UPDATE
+    and DELETE workflow steps.
+  description: 'Connect SingleStore application data to Flow Steward for reusable lookups and workflow
+    updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation,
+    previews, query execution and output-schema inference. Table and column resource selections constrain
+    Dataset queries, while query parameters let the same saved definition accept different workflow values.
+    Read results are limited to 100 rows and 480 KiB of inline output.
 
-    A separate execute_write action runs one INSERT, UPDATE or DELETE against a selected project connection. SQL uses named parameters and a values object, with an optional parameter schema, so reusable statements can accept record identifiers, statuses and other workflow values. For example, read records that need attention, send them through a review workflow, then update their status or insert a processing result using the record identifier as a parameter.
 
-    Set up the connection with an explicit SingleStore host, port, database and user, and keep the password in connection secrets. Reads remain read-only even when workflow write steps are available. This extension exposes selected SQL data access rather than database triggers, schema administration or multi-statement scripts. Use returned records in subsequent steps for branching, notifications or follow-up processing, and use separate write steps to persist the outcome.
-  setup_summary: "Create a project SingleStore connection with host, port, database and user, plus a nonempty secret password. Give the database user the read privileges needed for Dataset queries and the INSERT/UPDATE/DELETE grants required by your workflow steps."
+    A separate execute_write action runs one INSERT, UPDATE or DELETE against a selected project connection.
+    SQL uses named parameters and a values object, with an optional parameter schema, so reusable statements
+    can accept record identifiers, statuses and other workflow values. For example, read records that
+    need attention, send them through a review workflow, then update their status or insert a processing
+    result using the record identifier as a parameter.
+
+
+    Set up the connection with an explicit SingleStore host, port, database and user, and keep the password
+    in connection secrets. Reads remain read-only even when workflow write steps are available. This extension
+    exposes selected SQL data access rather than database triggers, schema administration or multi-statement
+    scripts. Use returned records in subsequent steps for branching, notifications or follow-up processing,
+    and use separate write steps to persist the outcome.'
+  setup_summary: Create a project SingleStore connection with host, port, database and user, plus a nonempty
+    secret password. Give the database user the read privileges needed for Dataset queries and the INSERT/UPDATE/DELETE
+    grants required by your workflow steps.
 package:
   format: flow-steward-extension
   license: Apache-2.0
@@ -215,8 +244,8 @@ runtime:
                 type: string
               SINGLESTORE_USER:
                 type: string
-            description: Optional SingleStore source environment overrides only. Credentials belong
-              in secrets.
+            description: Optional SingleStore source environment overrides only. Credentials belong in
+              secrets.
       secret_schema:
         type: object
         title: SingleStore credentials
@@ -264,12 +293,16 @@ runtime:
       schema_refresh_support: true
     operation_manifest:
     - operation_id: execute_write
-      display_name: Execute SingleStore write
+      display_name: 'SQL: Insert, update or delete rows'
       workflow_visible: true
       operation_kind: action
       category: database
-      description: Run one parameterized INSERT, UPDATE or DELETE on the selected SingleStore project
-        connection.
+      description: 'Write workflow results to SingleStore using one parameterized INSERT, UPDATE or DELETE.
+        Select a SingleStore project connection with write permission. Example: save a processing result
+        with INSERT INTO workflow_results (record_id, status) VALUES (:record_id, :status), then provide
+        Parameters and a type for each named parameter. Use Dataset saved queries for read-only SELECTs.
+        Test mode validates this action without writing; SQL syntax must be supported by the selected
+        database.'
       connection_type_ids:
       - toolbox_sql_writer
       required_scopes:
@@ -278,15 +311,30 @@ runtime:
       - name: connection_ref
         value_type: connection_ref
         required: true
+        display_name: SingleStore project connection
+        description: Select an existing project connection for SingleStore, configured with the correct
+          profile and credentials in connection secrets. Its database user needs permission to execute
+          your statement.
       - name: sql
         value_type: text
         required: true
+        display_name: SQL write statement
+        description: Enter one INSERT, UPDATE or DELETE supported by the selected database. Bind values
+          with :named placeholders, provide Parameters and declare every placeholder type. Use a Dataset
+          saved query for SELECT reads.
       - name: params
         value_type: object
         required: false
+        display_name: Parameters (JSON)
+        description: 'Object containing a value for every :named SQL placeholder. Bind workflow values
+          here rather than inserting them into SQL text. Example: {"record_id":1042,"status":"approved"}.'
       - name: param_schema
         value_type: object
         required: false
+        display_name: Parameter types (JSON Schema)
+        description: 'Declare a type for every :named SQL placeholder in properties, matching the Parameters
+          object. Required when SQL uses parameters; omit only for SQL without placeholders. Supported
+          types: string, integer, number, boolean and null.'
       outputs:
       - name: status
         value_type: text
@@ -416,3 +464,4 @@ runtime:
       error_codes:
       - unknown_query
       - connector_runtime_failed
+    step_ui_manifest: contracts/step_ui_manifest.yaml

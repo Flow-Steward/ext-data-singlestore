@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.8
+
+- Clarify workflow action names, descriptions and field help; add setup and input examples. Existing action IDs, input schemas and runtime behavior are preserved. Move the unchanged test launcher under tests/ so installer runtime checks accept the package.
+
+
 ## 1.3.5
 
 - Rebuild with checksum-verified official Go 1.27.4 SDK security fixes. The pinned Go 1.27.3 image supplies only the bootstrap environment; Toolbox source, all 106 module pins and safety patches remain unchanged.

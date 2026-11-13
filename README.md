@@ -1,6 +1,6 @@
 # SingleStore for Flow Steward
 
-Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.8**.
+Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.9**.
 
 Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews, query execution and output-schema inference. Table and column resource selections constrain Dataset queries, while query parameters let the same saved definition accept different workflow values. Read results are limited to 100 rows and 480 KiB of inline output.
 
@@ -39,7 +39,7 @@ The visible name is SingleStore. The legacy extension ID `flowsteward.data-conne
 
 ## Technical implementation and packaging
 
-Google MCP Toolbox is implementation tooling, pinned to tag `v1.16.0`, commit `06ea49d9a487a72c22419b5a8d5c22c11f0d7485`. Its fixed native build registers only this repository's SingleStore interfaces. Installation and runtime download no drivers. Native binaries are rebuilt with Go 1.27.4 and the reviewed module baseline; toolbox-provenance.json records exact patches, dependencies and binary digests.
+Google MCP Toolbox is implementation tooling, pinned to tag `v1.17.0`, commit `45ed205cc8682ed066c82e0b65bcd0e8fc3becce`. Its fixed native build registers only this repository's SingleStore interfaces. Installation and runtime download no drivers. Native binaries are rebuilt with Go 1.27.4 and the reviewed module baseline; toolbox-provenance.json records exact patches, dependencies and binary digests.
 
 To package the existing verified binaries:
 
@@ -61,19 +61,19 @@ pinned shared GitHub Actions workflow using `.github/release-config.json` to tes
 package both Linux runtime targets, and publish the release assets automatically.
 Manual ZIP uploads are not part of the release process.
 
-After merging the version **1.3.8** update into `main`, create and push its tag:
+After merging the version **1.3.9** update into `main`, create and push its tag:
 
 ```sh
 git switch main
 git pull --ff-only
-git tag -a v1.3.8 -m "Release v1.3.8"
-git push origin v1.3.8
+git tag -a v1.3.9 -m "Release v1.3.9"
+git push origin v1.3.9
 ```
 
 To rerun the workflow for an existing tag without moving it:
 
 ```sh
-gh workflow run release.yml --ref main -f tag=v1.3.8
+gh workflow run release.yml --ref main -f tag=v1.3.9
 ```
 
 The manifest remains the source for release identity and catalog descriptions.

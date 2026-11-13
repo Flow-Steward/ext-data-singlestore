@@ -1,3 +1,0 @@
-github.com/googleapis/mcp-toolbox/internal/sources/singlestore
-github.com/googleapis/mcp-toolbox/internal/tools/singlestore/singlestoreexecutesql
-github.com/googleapis/mcp-toolbox/internal/tools/singlestore/singlestoresql

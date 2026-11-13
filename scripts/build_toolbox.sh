@@ -3,9 +3,10 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+test "$#" = 0 || { echo "This build accepts no database selector" >&2; exit 2; }
 VARIANT=singlestore
-TOOLBOX_TAG=v1.16.0
-TOOLBOX_COMMIT=06ea49d9a487a72c22419b5a8d5c22c11f0d7485
+TOOLBOX_TAG=v1.17.0
+TOOLBOX_COMMIT=45ed205cc8682ed066c82e0b65bcd0e8fc3becce
 BOOTSTRAP_IMAGE=golang:1.27.3-bookworm@sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0
 PATCH=scripts/patches/0001-flowsteward-driver-bound-query-params.patch
 SECURITY_PATCH=scripts/patches/0003-flowsteward-security-dependencies.patch
@@ -16,10 +17,17 @@ test -f "$ROOT/scripts/toolbox-prebuilts.txt" \
 PREBUILTS=$(cat "$ROOT/scripts/toolbox-prebuilts.txt")
 mkdir -p "$ROOT"
 
-# Optional clean checkout must match the exact pinned source revision.
+# Optional source overrides are archived at the pinned commit, including linked worktrees.
+# No caller-specific source path is assumed; CI can clone the official source by default.
+TOOLBOX_SOURCE_DIR=${FS_TOOLBOX_SOURCE_DIR:-${TOOLBOX_SOURCE:-}}
 set --
-if test -n "${FS_TOOLBOX_SOURCE_DIR:-}"; then
-  set -- --mount "type=bind,source=$FS_TOOLBOX_SOURCE_DIR,target=/upstream,readonly"
+if test -n "$TOOLBOX_SOURCE_DIR"; then
+  test "$(git -C "$TOOLBOX_SOURCE_DIR" rev-parse HEAD)" = "$TOOLBOX_COMMIT" \
+    || { echo "[FAIL] source override differs from pinned Toolbox commit" >&2; exit 2; }
+  SOURCE_ARCHIVE_DIR=$(mktemp -d "${TMPDIR:-/tmp}/fs-toolbox-source.XXXXXX")
+  trap 'rm -rf "$SOURCE_ARCHIVE_DIR"' EXIT HUP INT TERM
+  git -C "$TOOLBOX_SOURCE_DIR" archive --format=tar "$TOOLBOX_COMMIT" > "$SOURCE_ARCHIVE_DIR/source.tar"
+  set -- --mount "type=bind,source=$SOURCE_ARCHIVE_DIR,target=/upstream,readonly"
 fi
 
 docker run --rm --cpus=2 --memory=4g \
@@ -31,15 +39,14 @@ docker run --rm --cpus=2 --memory=4g \
   -v "$ROOT:/out" "$@" "$BOOTSTRAP_IMAGE" sh -c '
     set -eu
     sh /out/scripts/install-go-toolchain.sh /out/scripts/go-toolchain-selected.json
-    if test -d /upstream/.git; then
-      test -z "$(git -c safe.directory=/upstream -C /upstream status --porcelain)"
-      cp -a /upstream /src
+    if test -f /upstream/source.tar; then
+      mkdir /src
+      tar -xf /upstream/source.tar -C /src
     else
       git clone --quiet --filter=blob:none --branch "$TOOLBOX_TAG" --depth 1 \
         https://github.com/googleapis/mcp-toolbox.git /src
+      test "$(git -C /src rev-parse HEAD)" = "$TOOLBOX_COMMIT"
     fi
-    git config --global --add safe.directory /src
-    test "$(git -C /src rev-parse HEAD)" = "$TOOLBOX_COMMIT"
     cd /src
     git apply --check "/out/$SECURITY_PATCH"
     git apply "/out/$SECURITY_PATCH"
@@ -92,7 +99,7 @@ docker run --rm --cpus=2 --memory=4g \
       echo "[PASS] $VARIANT $target: $(stat -c %s "/out/bin/$target/toolbox") bytes"
     done
     sha256sum -c /tmp/locked-modules.sha256
-    chown -R "$HOST_UID:$HOST_GID" "/out/bin" "/out/packages.txt"
+    chown -R "$HOST_UID:$HOST_GID" "/out/bin" "/out/packages.txt" "/out/scripts/go-toolchain-selected.json"
   '
 
 python3 "$ROOT/scripts/provenance.py"

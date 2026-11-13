@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.9
+
+- Rebuild native Linux payloads from official Toolbox v1.17.0 with the reviewed dependency security updates and Go 1.27.4.
+- Build native artifacts in CI and generate checksums and provenance from the resulting binaries.
+
 ## 1.3.8
 
 - Clarify workflow action names, descriptions and field help; add setup and input examples. Existing action IDs, input schemas and runtime behavior are preserved. Move the unchanged test launcher under tests/ so installer runtime checks accept the package.

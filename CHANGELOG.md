@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.10
+
+- Rebuild Linux AMD64 and ARM64 native payloads with google.golang.org/api v0.315.0 on the pinned Toolbox v1.17.0 and verified Go 1.27.4 baseline.
+- Preserve the other selected dependency versions, connector controls and approved profiles; reject the superseded Google API module during package verification.
+
+
 ## 1.3.9
 
 - Rebuild native Linux payloads from official Toolbox v1.17.0 with the reviewed dependency security updates and Go 1.27.4.

@@ -1,5 +1,5 @@
 diff --git a/go.mod b/go.mod
-index d121206abb..1bfc4517f6 100644
+index d121206abb..14607d8343 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -1,32 +1,30 @@
@@ -43,7 +43,7 @@ index d121206abb..1bfc4517f6 100644
  	github.com/apache/cassandra-gocql-driver/v2 v2.1.2
  	github.com/cenkalti/backoff/v7 v7.0.3
  	github.com/cockroachdb/cockroach-go/v2 v2.4.3
-@@ -35,7 +33,7 @@ require (
+@@ -35,13 +33,13 @@ require (
  	github.com/elastic/elastic-transport-go/v8 v8.11.0
  	github.com/elastic/go-elasticsearch/v9 v9.5.2
  	github.com/fsnotify/fsnotify v1.10.1
@@ -52,6 +52,13 @@ index d121206abb..1bfc4517f6 100644
  	github.com/go-chi/cors v1.2.2
  	github.com/go-chi/httplog/v3 v3.5.0
  	github.com/go-chi/render v1.0.3
+ 	github.com/go-goquery/goquery v1.0.1
+ 	github.com/go-playground/validator/v10 v10.30.6
+-	github.com/go-sql-driver/mysql v1.10.1
++	github.com/go-sql-driver/mysql v1.10.2
+ 	github.com/goccy/go-yaml v1.19.2
+ 	github.com/gocql/gocql v1.17.3
+ 	github.com/godror/godror v0.51.5
 @@ -49,7 +47,7 @@ require (
  	github.com/google/go-cmp v0.7.0
  	github.com/google/uuid v1.6.0
@@ -322,7 +329,7 @@ index d121206abb..1bfc4517f6 100644
  	gopkg.in/ini.v1 v1.67.0 // indirect
  	modernc.org/libc v1.79.0 // indirect
 diff --git a/go.sum b/go.sum
-index 23e8997bf3..bcfd004a20 100644
+index 23e8997bf3..dd183d29a5 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -1,48 +1,48 @@
@@ -607,12 +614,16 @@ index 23e8997bf3..bcfd004a20 100644
  github.com/go-logfmt/logfmt v0.6.0 h1:wGYYu3uicYdqXVgoYbvnkrPVXkuLM1p1ifugDMEdRi4=
  github.com/go-logfmt/logfmt v0.6.0/go.mod h1:WYhtIu8zTZfxdn5+rREduYbwxfcBr/Vr6KEVveWlfTs=
  github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
-@@ -296,8 +301,8 @@ github.com/go-playground/validator/v10 v10.30.6/go.mod h1:jPLL8SKCXGe/g87QmEyNw3
+@@ -294,10 +299,10 @@ github.com/go-playground/universal-translator v0.18.2/go.mod h1:67VZIMp5lQpDWlnS
+ github.com/go-playground/validator/v10 v10.30.6 h1:E+mymlPNRzAMNz1FShrRvLeGWcprF5w305eLLgWieuo=
+ github.com/go-playground/validator/v10 v10.30.6/go.mod h1:jPLL8SKCXGe/g87QmEyNw3NO28nmGt5GCnZnufm7rj4=
  github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
- github.com/go-sql-driver/mysql v1.10.1 h1:arlSnNLq6a5yxGxV7qg9lF4j0C+KwD6NbQyKr9QL6ME=
- github.com/go-sql-driver/mysql v1.10.1/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
+-github.com/go-sql-driver/mysql v1.10.1 h1:arlSnNLq6a5yxGxV7qg9lF4j0C+KwD6NbQyKr9QL6ME=
+-github.com/go-sql-driver/mysql v1.10.1/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
 -github.com/goccy/go-json v0.10.5 h1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=
 -github.com/goccy/go-json v0.10.5/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
++github.com/go-sql-driver/mysql v1.10.2 h1:5TRvGvczDohUMOCRA5aCAXgfSZOo/oNDSFD/2RrChS0=
++github.com/go-sql-driver/mysql v1.10.2/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
 +github.com/goccy/go-json v0.12.0 h1:pD+oWouAiz4yruwXIt/iT+lOMeyhr1aTtxzaMP/RgVI=
 +github.com/goccy/go-json v0.12.0/go.mod h1:3NdmfEkZlB7YI5UFw/qdFKq8XN1aiWR0YyRPWZNQltY=
  github.com/goccy/go-yaml v1.19.2 h1:PmFC1S6h8ljIz6gMRBopkjP1TVT7xuwrButHID66PoM=

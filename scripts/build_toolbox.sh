@@ -84,7 +84,10 @@ docker run --rm --cpus=2 --memory=4g \
     cp /tmp/packages "/out/packages.txt"
 
     gofmt -w internal/util/flowstewardbinding internal/sources/sqlite internal/sources/singlestore internal/sources/oceanbase internal/sources/clickhouse internal/sources/snowflake internal/sources/spanner
-    go test -mod=readonly -p 1 ./internal/util/flowstewardbinding ./internal/tools/singlestore/singlestoreexecutesql ./internal/sources/singlestore
+    # Exercise upstream protocol/config regressions without a live database.
+    go test -mod=readonly -p 1 -count=1 -timeout=60s -v github.com/go-sql-driver/mysql -run "^(TestReadHandshakePacketTruncated|TestConnectorTruncatedHandshake|TestDSNUnsafeCharset|TestDSNUnsafeCollation|TestConnectorBeforeConnectUnsafeCharset|TestBeforeConnectUsesEffectiveTimeout|TestBeforeConnectUsesEffectiveDialerAndAttributes|TestInterpolateParamsWithComments|TestReadColumnsCollation|TestHandshakeCollation|TestWriteExecutePacketValidatesArgsBeforeWriting|TestWriteExecutePacketValidatesSizeBeforeWriting|TestWriteExecutePacketResetsStmtAfterLongDataError|TestInfileFailureClosesConnection|TestInfileWriteFailureNotRetryable)$"
+
+    go test -mod=readonly -p 1 ./internal/util/flowstewardbinding ./internal/tools/mysql/mysqlcommon ./internal/tools/singlestore/singlestoreexecutesql ./internal/sources/singlestore
     for package in $(cat /tmp/packages | grep /internal/sources/); do
       go test -mod=readonly -p 1 -run TestFlowStewardBoundWrite "./${package#github.com/googleapis/mcp-toolbox/}"
     done

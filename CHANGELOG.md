@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.13
+
+- Rebuild Linux AMD64 and ARM64 native payloads with github.com/go-sql-driver/mysql v1.10.2 to include its handshake, interpolation and connection cleanup fixes.
+- Preserve pinned Toolbox v1.17.0, verified Go 1.27.4, existing dependency pins, bound SQL parameters, approved profiles and Support page.
+- Verify malformed greetings and MySQL charset compatibility against both packaged architectures; run focused upstream driver regressions during the hosted build.
+
 ## 1.3.12
 
 - Rebuild Linux AMD64 and ARM64 native payloads with grpc-gateway v2.34.0 and its required YAML v4 and Go tooling module updates.

@@ -119,3 +119,17 @@ def test_unicode_dollar_data_stays_separate_from_write_sql():
     bound = module._compile_bound_query(prebuilt, sql, {"value": value}, occurrences=occurrences)
     assert json.loads(bound["params_json"]) == {"value": value}
     assert value not in bound["sql"]
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "LOAD DATA LOCAL INFILE 'fixture' INTO TABLE products",
+        "UPDATE products SET price=1 WHERE sku='a'; SELECT 1",
+    ],
+)
+def test_mysql_driver_local_infile_and_batches_remain_outside_workflow_sql(sql):
+    module = load_runtime()
+    for prebuilt in sorted(module.TOOLBOX_DATASET_PREBUILTS & sql_writes.WRITE_PREBUILTS):
+        with pytest.raises(ValueError):
+            sql_writes.write_statement(sql, prebuilt=prebuilt)

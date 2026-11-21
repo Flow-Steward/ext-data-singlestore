@@ -60,11 +60,13 @@ def test_unreviewed_compiler_branch_is_rejected(go_version):
     [
         ("example.test/fork", "v99.0.0", False),
         ("golang.org/x/net", "v0.61.0", False),
-        ("golang.org/x/net", "v0.62.0", True),
+        ("golang.org/x/net", None, True),
     ],
 )
 def test_replacement_cannot_bypass_original_dependency_floor(tmp_path, path, version, accepted):
     baseline = json.loads((ROOT / "scripts/native-security-baseline.json").read_text())
+    if version is None:
+        version = baseline["modules"][path]
     import struct
 
     text = (

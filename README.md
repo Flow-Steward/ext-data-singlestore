@@ -1,6 +1,6 @@
 # SingleStore for Flow Steward
 
-Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.13**.
+Flow Steward extension `flowsteward.data-connector-mcp-toolbox-singlestore`, version **1.3.14**.
 
 Connect SingleStore application data to Flow Steward for reusable lookups and workflow updates. The Dataset connector provides connection testing, typed schema inspection, saved SQL validation, previews, query execution and output-schema inference. Table and column resource selections constrain Dataset queries, while query parameters let the same saved definition accept different workflow values. Read results are limited to 100 rows and 480 KiB of inline output.
 
@@ -61,19 +61,19 @@ pinned shared GitHub Actions workflow using `.github/release-config.json` to tes
 package both Linux runtime targets, and publish the release assets automatically.
 Manual ZIP uploads are not part of the release process.
 
-After merging the version **1.3.13** update into `main`, create and push its tag:
+After merging the version **1.3.14** update into `main`, create and push its tag:
 
 ```sh
 git switch main
 git pull --ff-only
-git tag -a v1.3.13 -m "Release v1.3.13"
-git push origin v1.3.13
+git tag -a v1.3.14 -m "Release v1.3.14"
+git push origin v1.3.14
 ```
 
 To rerun the workflow for an existing tag without moving it:
 
 ```sh
-gh workflow run release.yml --ref main -f tag=v1.3.13
+gh workflow run release.yml --ref main -f tag=v1.3.14
 ```
 
 The manifest remains the source for release identity and catalog descriptions.

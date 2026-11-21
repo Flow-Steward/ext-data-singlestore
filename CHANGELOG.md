@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.14
+
+- Refresh the locked Go dependency graph and rebuild the Linux AMD64 and ARM64 Toolbox payloads.
+
 ## 1.3.13
 
 - Rebuild Linux AMD64 and ARM64 native payloads with github.com/go-sql-driver/mysql v1.10.2 to include its handshake, interpolation and connection cleanup fixes.
